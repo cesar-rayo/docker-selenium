@@ -22,3 +22,12 @@ spec:
       port: {{ .Values.firefoxNode.seleniumServicePort }}
       targetPort: {{ .Values.firefoxNode.seleniumPort }}
 {{- end }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: firefox-display
+spec:
+  selector:
+    app: selenium-firefox-node
+  clusterIP: None

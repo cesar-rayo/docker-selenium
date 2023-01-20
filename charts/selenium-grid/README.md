@@ -67,6 +67,7 @@ This table contains the configuration parameters of the chart and their default 
 | `ingress.hostname`                      | `selenium-grid.local`              | Default host for the ingress resource                                                                                      |
 | `ingress.tls`                           | `[]`                               | TLS backend configuration for ingress resource                                                                             |
 | `busConfigMap.annotations`              | `{}`                               | Custom annotations for configmap                                                                                           |
+| `videoRecorder.videosPath`              | `/private/tmp/videos`              | Default path to store video files in host                                                                                  |
 | `chromeNode.enabled`                    | `true`                             | Enable chrome nodes                                                                                                        |
 | `chromeNode.deploymentEnabled`          | `true`                             | Enable creation of Deployment for chrome nodes                                                                             |
 | `chromeNode.replicas`                   | `1`                                | Number of chrome nodes                                                                                                     |

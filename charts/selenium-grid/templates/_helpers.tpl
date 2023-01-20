@@ -52,6 +52,13 @@ SessionQueue fullname
 {{- end -}}
 
 {{/*
+Video recorder node fullname
+*/}}
+{{- define "seleniumGrid.videoRecorder.fullname" -}}
+{{- default "selenium-video-recorder" .Values.videoRecorder.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- end -}}
+
+{{/*
 Chrome node fullname
 */}}
 {{- define "seleniumGrid.chromeNode.fullname" -}}

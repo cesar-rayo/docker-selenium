@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "seleniumGrid.videoRecorder.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: selenium-video-recorder
+    {{- include "seleniumGrid.commonLabels" . | nindent 4 }}
+    {{- with .Values.customLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+{{- with .Values.videoRecorder.serviceAnnotations }}
+  annotations: {{- toYaml . | nindent 4 }}
+{{- end }}
+spec:
+  selector:
+    app: selenium-video-recorder
+    app.kubernetes.io/instance: {{ .Release.Name }}
+  type: {{ .Values.videoRecorder.serviceType }}
+  ports:
+    - name: tcp-router
+      protocol: TCP
+      port: {{ .Values.videoRecorder.hostPort }}
+      targetPort: {{ .Values.videoRecorder.containerPort }}

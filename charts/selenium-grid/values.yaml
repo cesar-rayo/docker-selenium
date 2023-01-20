@@ -286,6 +286,18 @@ hub:
   # Priority class name for selenium-hub pods
   priorityClassName: ""
 
+# Configuration for Recorder Node
+videoRecorder:
+  replicas: 1
+  imageName: video-recorder
+  imageTag: latest
+  imagePullPolicy: IfNotPresent
+  hostPort: 5001
+  containerPort: 5000
+  serviceType: LoadBalancer
+  # Specify the folder to store the video files in the host, this must be an absolute path
+  videosPath: /private/tmp/videos
+
 # Configuration for chrome nodes
 chromeNode:
   # Enable chrome nodes

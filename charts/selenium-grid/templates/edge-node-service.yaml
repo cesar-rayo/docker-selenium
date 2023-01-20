@@ -22,3 +22,12 @@ spec:
       port: {{ .Values.edgeNode.seleniumServicePort }}
       targetPort: {{ .Values.edgeNode.seleniumPort }}
 {{- end }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: edge-display
+spec:
+  selector:
+    app: selenium-edge-node
+  clusterIP: None

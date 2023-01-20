@@ -22,3 +22,12 @@ spec:
       port: {{ .Values.chromeNode.seleniumServicePort }}
       targetPort: {{ .Values.chromeNode.seleniumPort }}
 {{- end }}
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: chrome-display
+spec:
+  selector:
+    app: selenium-chrome-node
+  clusterIP: None

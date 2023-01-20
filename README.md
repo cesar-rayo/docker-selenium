@@ -472,44 +472,47 @@ ___
 
 ## Video recording
 
-Tests execution can be recorded by using the `selenium/video:ffmpeg-4.3.1-20221219`
-Docker image. One container is needed per each container where a browser is running. This means if you are
-running 5 Nodes/Standalone containers, you will need 5 video containers, the mapping is 1-1.
+Tests execution can be recorded by using the [video-recorder](RecorderNode/README.md) Docker Image.
+This is an in-progress work. And the general idea is to expose a service while using Helm Chart or Docker Compose,
+the service will be available at the given port (`5001` by default).
 
-Currently, the only way to do this mapping is manually (either starting the containers manually, or through
-`docker-compose`). We are iterating on this process and probably this setup will be more simple in the future.
-
-The video Docker image we provide is based on the ffmpeg Ubuntu image provided by the 
-[jrottenberg/ffmpeg](https://github.com/jrottenberg/ffmpeg) project, thank you for providing this image and
-simplifying our work :tada:
-
-**Notes**:
-- If you have questions or feedback, please use the community contact points shown [here](https://www.selenium.dev/support/). 
-- Please report any bugs through GitHub [issues](https://github.com/SeleniumHQ/docker-selenium/issues/new/choose), and provide
-all the information requested on the template.
-- Video recording for headless browsers is not supported. 
-- Video recording tends to use considerable amounts of CPU. Normally you should estimate 1CPU per video container, 
-and 1 CPU per browser container.
-- Videos are stored in the `/videos` directory inside the video container. Map a local directory to get the videos.
-- If you are running more than one video container, be sure to overwrite the video file name through the `FILE_NAME`
-environment variable to avoid unexpected results.
-
-This example shows how to start the containers manually:
-
-``` bash
-$ docker network create grid
-$ docker run -d -p 4444:4444 -p 6900:5900 --net grid --name selenium --shm-size="2g" selenium/standalone-chrome:4.7.2-20221219
-$ docker run -d --net grid --name video -v /tmp/videos:/videos selenium/video:ffmpeg-4.3.1-20221219
-# Run your tests
-$ docker stop video && docker rm video
-$ docker stop selenium && docker rm selenium
+### Start a recording:
+```shell
+$ curl -X POST http://localhost:5001/start -H "Content-Type: application/json" -d '{"videoName":"helm_01202023_160248","targetDisplay":"chrome-display"}'
+{"file": "helm_01202023_160248.mp4", "status": "recording"}
 ```
-After the containers are stopped and removed, you should see a video file on your machine's `/tmp/videos` directory.
+Here we need to specify the name of the container we want to record from:
 
-Here is an example using a Hub and a few Nodes:
+For Docker compose we use the container node name like:
+* chrome
+* edge
+* firefox
 
-[`docker-compose-v3-video.yml`](docker-compose-v3-video.yml)
+For Helm chart we use headless service names like:
+* chrome-display
+* edge-display
+* firefox-display
 
+### Check service status:
+```shell
+$ curl -X GET http://localhost:5001/status
+{"status": "waiting"}
+```
+In case a recording is already running you will get something like this:
+```shell
+$ curl -X GET http://localhost:5001/status
+{"file": "helm_01202023_160248.mp4", "status": "recording"}
+```
+
+### Stop a recording:
+```shell
+$ curl -v -X POST http://localhost:5001/stop
+{"file": "test_01202023_160248.mp4", "status": "stopped"}
+```
+
+Once the stop request is processed, a new file will be created in the folder we have specified in the shared volumes:
+* Docker compose: `video_recorder.volumes`
+* Kubernetes: `videoRecorder.videosPath`
 ___
 
 ## Dynamic Grid

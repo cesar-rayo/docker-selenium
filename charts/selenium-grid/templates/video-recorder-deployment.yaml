@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "seleniumGrid.videoRecorder.fullname" . }}
+  namespace: {{ .Release.Namespace }}
+  labels: &recorder_labels
+    app: selenium-video-recorder
+    app.kubernetes.io/name: selenium-video-recorder
+    {{- include "seleniumGrid.commonLabels" . | nindent 4 }}
+    {{- with .Values.customLabels }}
+      {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: selenium-video-recorder
+      app.kubernetes.io/instance: {{ .Release.Name }}
+  template:
+    metadata:
+      labels: *recorder_labels
+    {{- with .Values.videoRecorder.annotations }}
+      annotations: {{- toYaml . | nindent 8 }}
+    {{- end }}
+    spec:
+      containers:
+        - name: selenium-video-recorder
+          {{- $imageTag := default .Values.global.seleniumGrid.imageTag .Values.videoRecorder.imageTag }}
+          image: {{ printf "%s:%s" .Values.videoRecorder.imageName $imageTag }}
+          imagePullPolicy: {{ .Values.components.router.imagePullPolicy }}
+          ports:
+            - containerPort: {{ .Values.videoRecorder.containerPort }}
+              protocol: TCP
+          volumeMounts:
+            - name: videos
+              mountPath: /video_recorder/videos
+      volumes:
+        - name: videos
+          hostPath:
+            path: {{ .Values.videoRecorder.videosPath }}
