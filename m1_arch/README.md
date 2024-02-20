@@ -1,13 +1,12 @@
 ## M1 Arch
 ```shell
 $ docker-compose up
-...
+Creating network "m1_arch_default" with the default driver
 Creating selenium-hub ... done
-Creating test_chrome1_1 ... done
-Creating test_chrome0_1 ... done
-Creating test_chrome2_1 ... done
+Creating m1_arch_chrome2_1 ... done
+Creating m1_arch_chrome1_1 ... done
+Creating m1_arch_chrome0_1 ... done
 ```
-
 
 ```shell
 $ docker ps
